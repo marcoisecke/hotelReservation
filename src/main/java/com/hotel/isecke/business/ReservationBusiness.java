@@ -7,21 +7,7 @@ import com.hotel.isecke.model.Reservation;
  */
 public class ReservationBusiness {
 
-	private static final String HOTEL_FULL_MESSAGE = "We apologize, our hotel can be booked one year in advance";
-
-	/**
-	 * Make valid that the booking is just in one year
-	 * 
-	 * @param startDate
-	 * @param endDate
-	 * @throws Exception
-	 */
-	public void verificaDataValida(int startDate, int endDate) throws Exception {
-		if (startDate < 0 || startDate > 365 && endDate < 0 || endDate > 365) {
-			throw new Exception(HOTEL_FULL_MESSAGE);
-		}
-	}
-
+		
 	/**
 	 * Method responsible for check if the room is available on the requested
 	 * date

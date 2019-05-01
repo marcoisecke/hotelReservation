@@ -11,16 +11,23 @@ import com.hotel.isecke.model.Room;
  */
 public class HotelBusiness {
 
-	private static final String HOTEL_FULL_MESSAGE = "We don't have vacancies!";
+	private static final String BOOKING_DECLINED = "Booking Declined! We don't have vacancies.";
+	private static final String HOTEL_LIMIT = "We just accepted 1000 rooms!";
+	private static final String HOTEL_FULL_MESSAGE = "We apologize, our hotel can be booked one year in advance";
 	public int tamanhoHotel;
 	public List<Room> rooms;
-	
+
 	private ReservationBusiness reservationBusiness = new ReservationBusiness();
 
 	/**
 	 * Define how many rooms there are in the hotel
+	 * 
+	 * @throws Exception
 	 */
-	public void defineSizeHotel(int tamanhoHotel) {
+	public void defineSizeHotel(int tamanhoHotel) throws Exception {
+		if (tamanhoHotel > 1000) {
+			throw new Exception(HOTEL_LIMIT);
+		}
 		setTamanhoHotel(tamanhoHotel);
 	}
 
@@ -29,11 +36,20 @@ public class HotelBusiness {
 	 * 
 	 * @param reservation
 	 */
-	public void checkAvailableroom(Reservation reservation) throws Exception {
+	public boolean checkAvailableroom(Reservation reservation) {
+
+		if (reservation.getStartDay() < 0 || reservation.getStartDay() > 365 && reservation.getEndDay() < 0
+				|| reservation.getEndDay() > 365) {
+			System.out.println(HOTEL_FULL_MESSAGE);
+			return false;
+		}
+
+
 		for (Room r : getRooms()) {
 			if (r.getReservationDay().isEmpty()) {
 				r.getReservationDay().add(reservation);
-				return;
+				messageSuc();
+				return true;
 			}
 
 			boolean roomAvailable = true;
@@ -44,23 +60,28 @@ public class HotelBusiness {
 			}
 			if (roomAvailable) {
 				r.getReservationDay().add(reservation);
-				return;
+				messageSuc();
+				return true;
 			}
 		}
+		
+		if (getTamanhoHotel() < getRooms().size() +1) {
+			System.out.println(BOOKING_DECLINED);
+			return false;
+		}
 
-		checkHotelFull();
 		createRoom(reservation);
+		return true;
 	}
 
 	/**
-	 * Check if the hotel is full.
 	 * 
-	 * @throws Exception
+	 * @param reservations
+	 * @return
 	 */
-	private void checkHotelFull() throws Exception {
-		if (getTamanhoHotel() < getRooms().size() + 1) {
-			throw new Exception(HOTEL_FULL_MESSAGE);
-		}
+	public boolean checkAvailableroomList(List<Reservation> reservations) {
+		reservations.stream().forEach(r -> checkAvailableroom(r));
+		return true;
 	}
 
 	/**
@@ -70,10 +91,15 @@ public class HotelBusiness {
 	 */
 	private void createRoom(Reservation reservation) {
 		getRooms().add(new Room(reservation.getStartDay(), reservation.getEndDay(), getRooms().size() + 1));
-
+		messageSuc();
 	}
 
-
+	/**
+	 * message successful
+	 */
+	private void messageSuc() {
+		System.out.println("Booking Accepted!Enjoy your stay.");
+	}
 
 	/************************ getters and setters ************************/
 
