@@ -1,6 +1,6 @@
-Hotel Reservations
+Hotel Reservations - Code Challenge -
 
-Background
+Background -
 
 Imagine you own a hotel with a certain number of identical rooms - let's call this number the size of your hotel.
 Your clients would like to make reservations for rooms: They e.g. call to check if they can make a reservation for
